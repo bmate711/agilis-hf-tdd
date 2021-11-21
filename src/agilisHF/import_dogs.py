@@ -19,18 +19,19 @@ class ValidationError(Exception):
 def import_data(raw, db):
     for dog in raw:
         validate_dog_name(dog)
+        validate_vaccination(dog)
     return True
 
 def validate_dog_name(dog):
     if "cat" in dog["name"]:
         raise ValidationError("Name contain 'cat'")
-
     if dog["sex"] == True and dog["name"] != 'M':
         raise ValidationError("Male name should start with M")
-    
     return dog
 
-
+def validate_vaccination(dog):
+    if dog["age"] > 5 and "cutness" not in dog["vaccination"]:
+        raise ValidationError("Older than 5 should be vaccinated with cutness")
     
 
     
