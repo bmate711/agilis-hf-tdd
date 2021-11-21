@@ -42,6 +42,8 @@ def validate_description(dog):
         raise ValidationError("Description should be longer than 50")
     if len(dog["description"]) > 100:
         raise ValidationError("Description should be shorter than 100")
+    if dog["color"] not in dog["description"]:
+        raise ValidationError("Description should contain dog color")
 
     
 
