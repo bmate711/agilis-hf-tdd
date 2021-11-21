@@ -5,13 +5,13 @@ from agilisHF.import_dogs import ValidationError
 from agilisHF.model import Dog
 
 class DetailsTest(unittest.TestCase):
-    db = mongomock.MongoClient().db
+    db = mongomock.MongoClient().db.dogs
 
     def setUp(self) -> None:
         return super().setUp()
 
     def tearDown(self) -> None:
-        self.db.dogs.drop()
+        self.db.drop()
         return super().tearDown()
 
     def test_import_data_return_value_true(self):
@@ -60,4 +60,11 @@ class DetailsTest(unittest.TestCase):
         raw = [{'name': 'Mtest', 'color': 'brown', 'description': 'description!ddddddddddddddddddddddddddddddddddddddddddddddddd', 'breed': 'jiii', 'vaccination': ['v1!!', 'vocid'], 'age': 1, 'sex': True}]
         with self.assertRaises(ValidationError) as context:
             import_data(raw, self.db)
-        self.assertTrue("Description should be contain dog color" in str(context.exception))
+        print(context.exception)
+        self.assertTrue("Description should contain dog color" in str(context.exception))
+
+    def test_import_data_pass_data_persist_in_db(self):
+        raw = [{'name': 'test', 'color': 'brown', 'description': 'description!! brown textetxtetxtettetttedtetdtedtedtetdetdettetetedtetd', 'breed': 'finally!!', 'vaccination': ['v1!!', 'vocid', 'cutness'], 'age': 10, 'sex': False}]
+        import_data(raw, self.db)
+        db_data = list(self.db.find({}, {'_id': False}))
+        self.assertCountEqual(raw, db_data)
