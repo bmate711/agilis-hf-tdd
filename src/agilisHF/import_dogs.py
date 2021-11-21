@@ -15,7 +15,7 @@ class ValidationError(Exception):
 # A leírás 50-100 karakte hosszú lehet
 # A kutya színének szerepelnie kell a leírásban
 def import_data(raw, db):
-    return
+    return True
 
     
 
