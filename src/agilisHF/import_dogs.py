@@ -6,9 +6,6 @@ class ValidationKeyError(KeyError):
 class ValidationError(Exception):
     pass
 
-
-
-
 # Adatbázisban tárolni kell az új kutyákat
 # A kutya neve nem tartalmazhatja a 'cat' szót
 # Ha a kutya fiú 'M' kell kezdődni a neve
@@ -21,6 +18,10 @@ def import_data(raw, db):
         validate_dog_name(dog)
         validate_vaccination(dog)
         validate_description(dog)
+    dogs = []
+    for dog in raw:
+        dogs.append(Dog(**dog).to_bson())
+    db.insert_many(dogs)
     return True
 
 def validate_dog_name(dog):
