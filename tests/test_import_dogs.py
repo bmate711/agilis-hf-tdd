@@ -31,3 +31,9 @@ class DetailsTest(unittest.TestCase):
         with self.assertRaises(ValidationError) as context:
             import_data(raw, self.db)
         self.assertTrue("Male name should start with M" in str(context.exception))
+
+    def test_import_data_older_than_5_cutness_needed(self):
+        raw = [{'name': 'test', 'color': 'brown', 'description': 'description!! brown textetxtetxtettetttedtetdtedtedtetdetdettetetedtetd', 'breed': 'finally!!', 'vaccination': ['v1!!', 'vocid'], 'age': 10, 'sex': False}]
+        with self.assertRaises(ValidationError) as context:
+            import_data(raw, self.db)
+        self.assertTrue("Older than 5 should be vaccinated with cutness" in str(context.exception))
