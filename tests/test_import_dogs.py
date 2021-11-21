@@ -1,6 +1,5 @@
 from agilisHF.import_dogs import import_data
-import mongomock
-import pytest
+import mongomock 
 import unittest
 from agilisHF.import_dogs import ValidationError
 from agilisHF.model import Dog
@@ -39,8 +38,8 @@ class DetailsTest(unittest.TestCase):
         self.assertTrue("Older than 5 should be vaccinated with cutness" in str(context.exception))
 
 
-    def test_import_data_older_than_5_cutness_needed(self):
-        raw = [{'name': 'test', 'color': 'brown', 'description': 'description!! brown textetxtetxtettetttedtetdtedtedtetdetdettetetedtetd', 'breed': 'mixed', 'vaccination': ['v1!!', 'vocid'], 'age': 10, 'sex': True}]
+    def test_import_data_mixed_breed_name_contain_snow(self):
+        raw = [{'name': 'test', 'color': 'brown', 'description': 'description!! brown textetxtetxtettetttedtetdtedtedtetdetdettetetedtetd', 'breed': 'mixed', 'vaccination': ['v1!!', 'vocid', 'cutness'], 'age': 10, 'sex': False}]
         with self.assertRaises(ValidationError) as context:
             import_data(raw, self.db)
         self.assertTrue("Mixed breed dog name should contain 'Snow'" in str(context.exception))

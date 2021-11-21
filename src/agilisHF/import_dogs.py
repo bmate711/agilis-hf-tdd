@@ -27,6 +27,9 @@ def validate_dog_name(dog):
         raise ValidationError("Name contain 'cat'")
     if dog["sex"] == True and dog["name"] != 'M':
         raise ValidationError("Male name should start with M")
+    if dog["breed"] == "mixed":
+        if "Snow" not in dog["name"]:
+            raise ValidationError("Mixed breed dog name should contain 'Snow'")
     return dog
 
 def validate_vaccination(dog):
