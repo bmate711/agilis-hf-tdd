@@ -30,4 +30,4 @@ class DetailsTest(unittest.TestCase):
         raw = [{'name': 'sest', 'color': 'brown', 'description': 'description!! brown textetxtetxtettetttedtetdtedtedtetdetdettetetedtetd', 'breed': 'finally!!', 'vaccination': ['v1!!', 'vocid', 'cutness'], 'age': 10, 'sex': True}]
         with self.assertRaises(ValidationError) as context:
             import_data(raw, self.db)
-        self.assertTrue("Name contain 'cat'" in str(context.exception))
+        self.assertTrue("Male name should start with M" in str(context.exception))

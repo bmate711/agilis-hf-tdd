@@ -24,6 +24,10 @@ def import_data(raw, db):
 def validate_dog_name(dog):
     if "cat" in dog["name"]:
         raise ValidationError("Name contain 'cat'")
+
+    if dog["sex"] == True and dog["name"] != 'M':
+        raise ValidationError("Male name should start with M")
+    
     return dog
 
 
