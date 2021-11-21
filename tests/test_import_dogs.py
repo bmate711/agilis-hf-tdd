@@ -2,7 +2,7 @@ from agilisHF.import_dogs import import_data
 import mongomock
 import pytest
 import unittest
-from agilisHF.controllers import ValidationError, get_details_by_search
+from agilisHF.import_dogs import ValidationError
 from agilisHF.model import Dog
 
 class DetailsTest(unittest.TestCase):
@@ -20,7 +20,14 @@ class DetailsTest(unittest.TestCase):
         result = import_data(raw, self.db)
         assert True == result
 
-    def test_import_data_dog_exception_name_must_not_contain_cat(self):
+    def test_import_data_dog_name_must_not_contain_cat(self):
         raw = [{'name': 'tecatst', 'color': 'brown', 'description': 'description!! brown textetxtetxtettetttedtetdtedtedtetdetdettetetedtetd', 'breed': 'finally!!', 'vaccination': ['v1!!', 'vocid', 'cutness'], 'age': 10, 'sex': False}]
-        with pytest.raises(ValidationError):
+        with self.assertRaises(ValidationError) as context:
             import_data(raw, self.db)
+        self.assertTrue("Name contain 'cat'" in str(context.exception))
+
+    def test_import_data_dog_male_name_should_start_with_M(self):
+        raw = [{'name': 'sest', 'color': 'brown', 'description': 'description!! brown textetxtetxtettetttedtetdtedtedtetdetdettetetedtetd', 'breed': 'finally!!', 'vaccination': ['v1!!', 'vocid', 'cutness'], 'age': 10, 'sex': True}]
+        with self.assertRaises(ValidationError) as context:
+            import_data(raw, self.db)
+        self.assertTrue("Name contain 'cat'" in str(context.exception))
