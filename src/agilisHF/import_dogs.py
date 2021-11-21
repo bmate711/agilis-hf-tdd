@@ -20,12 +20,13 @@ def import_data(raw, db):
     for dog in raw:
         validate_dog_name(dog)
         validate_vaccination(dog)
+        validate_description(dog)
     return True
 
 def validate_dog_name(dog):
     if "cat" in dog["name"]:
         raise ValidationError("Name contain 'cat'")
-    if dog["sex"] == True and dog["name"] != 'M':
+    if dog["sex"] == True and dog["name"][0] != 'M':
         raise ValidationError("Male name should start with M")
     if dog["breed"] == "mixed":
         if "Snow" not in dog["name"]:
@@ -35,7 +36,12 @@ def validate_dog_name(dog):
 def validate_vaccination(dog):
     if dog["age"] > 5 and "cutness" not in dog["vaccination"]:
         raise ValidationError("Older than 5 should be vaccinated with cutness")
-    
+
+def validate_description(dog):
+    if len(dog["description"]) < 50:
+        raise ValidationError("Description should be longer than 50")
+    if len(dog["description"]) > 100:
+        raise ValidationError("Description should be shorter than 100")
 
     
 

@@ -45,13 +45,14 @@ class DetailsTest(unittest.TestCase):
         self.assertTrue("Mixed breed dog name should contain 'Snow'" in str(context.exception))
 
     def test_import_data_exception_description_sorter_than_50(self):
-        raw = [{'name': 'Mtest', 'color': 'brown', 'description': 'description!! brown', 'breed': 'mixed', 'vaccination': ['v1!!', 'vocid'], 'age': 1, 'sex': True}]
+        raw = [{'name': 'Mtest', 'color': 'brown', 'description': 'description!! brown', 'breed': 'dsadw', 'vaccination': ['v1!!', 'vocid'], 'age': 1, 'sex': False}]
         with self.assertRaises(ValidationError) as context:
             import_data(raw, self.db)
         self.assertTrue("Description should be longer than 50" in str(context.exception))
 
     def test_import_data_exception_description_onger_than_100(self):
-        raw = [{'name': 'Mtest', 'color': 'brown', 'description': 'description!! brown ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd', 'breed': 'mixed', 'vaccination': ['v1!!', 'vocid'], 'age': 1, 'sex': True}]
+        raw = [{'name': 'Mtest', 'color': 'brown', 'description': 'description!! brown ddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd', 'breed': 'jiii', 'vaccination': ['v1!!', 'vocid'], 'age': 1, 'sex': False}]
         with self.assertRaises(ValidationError) as context:
             import_data(raw, self.db)
+        print(context.exception)
         self.assertTrue("Description should be shorter than 100" in str(context.exception))
