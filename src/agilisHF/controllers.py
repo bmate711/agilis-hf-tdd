@@ -25,7 +25,12 @@ class ValidationError(Exception):
 #   "breed": string
 # }
 def get_details_by_search(search_conditions: dict, pymongo_db: Database) -> List[Dog]:
-    return []
+    result = pymongo_db.dogs.find(search_conditions)
+    dogs: List[Dog] = []
+    for dog in result:
+        dogData = Dog(**dog)
+        dogs.append(dogData.to_json())
+    return dogs
 
 
 def get_details_by_id(id: str, pymongo_db: Database):

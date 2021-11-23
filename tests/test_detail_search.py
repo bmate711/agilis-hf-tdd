@@ -43,6 +43,8 @@ class DetailsTest(unittest.TestCase):
     ]
 
     def setUp(self) -> None:
+        for dog in self.dogs:
+            self.db.dogs.insert_one(dog.to_bson())
         return super().setUp()
 
     def tearDown(self) -> None:
