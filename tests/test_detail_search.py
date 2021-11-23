@@ -48,15 +48,15 @@ class DetailsTest(unittest.TestCase):
         return super().setUp()
 
     def tearDown(self) -> None:
-        self.db.drop()
+        self.db.dogs.drop()
         return super().tearDown()
 
     def test_parameter_not_null_and_not_throwing(self):
         get_details_by_search({"name": "Doggo", "age": 22}, self.db)
 
     def test_good_query_should_return_dog_list(self):
-        dogs = get_details_by_search({"name": "Test", "age": 1}, self.db)
-        assert len(dogs) == 1
+        result = get_details_by_search({"name": "Test", "age": 1}, self.db)
+        assert len(result) == 1
 
     def test_wrong_params_throw_validation_error(self):
         with self.assertRaises(ValidationError):
@@ -69,8 +69,10 @@ class DetailsTest(unittest.TestCase):
             )
 
     def test_vaccinated_value_should_work(self):
-        dogs = get_details_by_search(
+        result = get_details_by_search(
             {"name": "Test", "age": 1, "vaccinated": False}, self.db
         )
-        assert len(dogs) == 1
-        assert dogs[0].name == self.dogs[0].name
+        assert len(result) == 1
+        assert result[0].name == self.dogs[0].name
+        # Does not have vaccine
+        assert len(result[0].vaccination) == 0

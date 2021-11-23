@@ -26,7 +26,18 @@ class ValidationError(Exception):
 def get_details_by_search(search_conditions: dict, pymongo_db: Database) -> List[Dog]:
     validate_search_condition_keys(search_conditions)
     validate_search_condition_types(search_conditions)
-    result = pymongo_db.dogs.find(search_conditions)
+
+    search_query = {}
+    for key, value in search_conditions.items():
+        if key == "vaccinated":
+            search_query["vaccination"] = (
+                {"$exists": True, "$ne": []}
+                if value == True
+                else {"$exists": True, "$eq": []}
+            )
+        elif value is not None:
+            search_query[key] = value
+    result = pymongo_db.dogs.find(search_query)
     dogs: List[Dog] = []
     for dog in result:
         dogData = Dog(**dog)
