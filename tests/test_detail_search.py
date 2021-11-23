@@ -61,3 +61,16 @@ class DetailsTest(unittest.TestCase):
     def test_wrong_params_throw_validation_error(self):
         with self.assertRaises(ValidationError):
             get_details_by_search({"test": "test", "null": None}, self.db)
+
+    def test_wrong_param_type_throw_validation_error(self):
+        with self.assertRaises(ValidationError):
+            get_details_by_search(
+                {"name": 1, "age": "Middle age", "sex": "male"}, self.db
+            )
+
+    def test_vaccinated_value_should_work(self):
+        dogs = get_details_by_search(
+            {"name": "Test", "age": 1, "vaccinated": False}, self.db
+        )
+        assert len(dogs) == 1
+        assert dogs[0].name == self.dogs[0].name
