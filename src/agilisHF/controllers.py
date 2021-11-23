@@ -25,7 +25,7 @@ class ValidationError(Exception):
 #   "breed": string
 # }
 def get_details_by_search(search_conditions: dict, pymongo_db: Database) -> List[Dog]:
-    raise NotImplementedError
+    return []
 
 
 def get_details_by_id(id: str, pymongo_db: Database):

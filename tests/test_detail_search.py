@@ -51,3 +51,7 @@ class DetailsTest(unittest.TestCase):
 
     def test_parameter_not_null_and_not_throwing(self):
         get_details_by_search({"name": "Doggo", "age": 22}, self.db)
+
+    def test_good_query_should_return_dog_list(self):
+        dogs = get_details_by_search({"name": "Test", "age": 1}, self.db)
+        assert len(dogs) == 1
