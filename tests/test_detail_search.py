@@ -1,6 +1,7 @@
 from agilisHF.controllers import (
     ValidationError,
     get_details_by_free_text,
+    get_details_by_id,
     get_details_by_search,
 )
 import mongomock
@@ -46,13 +47,17 @@ class DetailsTest(unittest.TestCase):
         ),
     ]
 
+    ids = []
+
     def setUp(self) -> None:
         for dog in self.dogs:
-            self.db.dogs.insert_one(dog.to_bson())
+            d = self.db.dogs.insert_one(dog.to_bson())
+            self.ids.append(str(d.inserted_id))
         return super().setUp()
 
     def tearDown(self) -> None:
         self.db.dogs.drop()
+        self.ids = []
         return super().tearDown()
 
     def test_parameter_not_null_and_not_throwing(self):
@@ -100,3 +105,10 @@ class DetailsTest(unittest.TestCase):
     def test_search_by_free_text_should_throw_validation_error(self):
         with self.assertRaises(ValidationError):
             get_details_by_free_text(0, self.db)
+
+    def test_search_by_id_should_not_throw_with_params(self):
+        get_details_by_id(self.ids[0], self.db)
+
+    def test_search_by_id_should_throw_validation_error(self):
+        with self.assertRaises(ValidationError):
+            get_details_by_id(0, self.db)

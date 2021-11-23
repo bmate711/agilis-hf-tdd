@@ -21,6 +21,7 @@ from agilisHF.controllers import (
     ValidationError,
     get_details_by_id,
     get_details_by_search,
+    get_details_by_free_text,
 )
 
 
@@ -37,6 +38,7 @@ print(os.getenv("MONGO_URI"))
 data: Collection = pymongo.db.dog
 
 data2: Collection = pymongo.db.user
+
 
 @app.errorhandler(404)
 def resource_not_found(e):
@@ -73,11 +75,13 @@ def new_dog():
     print(dog)
     return dog.to_json()
 
+
 @app.route("/import", methods=["POST"])
 def import_dogs():
     raw_dog_list = request.get_json()
     import_data(raw_dog_list, data)
     return jsonify(True)
+
 
 @app.route("/dogs/detail", methods=["POST"])
 def get_dogs():
@@ -92,8 +96,18 @@ def get_dogs():
 @app.route("/dogs/detail/", methods=["GET"])
 def get_dog_by_id():
     id = request.args.get("id")
-    dogs = get_details_by_id(id, pymongo.db)
-    return dogs
+    dog = get_details_by_id(id, pymongo.db)
+    return dog.to_json()
+
+
+@app.route("/dogs/detail/search", methods=["GET"])
+def get_dog_by_text():
+    text = request.args.get("text")
+    result_jsons = []
+    res = get_details_by_free_text(text, pymongo.db)
+    for dog in res:
+        result_jsons.append(dog.to_json())
+    return jsonify(dogs=result_jsons)
 
 
 @app.route("/users", methods=["POST"])
