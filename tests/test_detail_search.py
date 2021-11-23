@@ -1,4 +1,8 @@
-from agilisHF.controllers import ValidationError, get_details_by_search
+from agilisHF.controllers import (
+    ValidationError,
+    get_details_by_free_text,
+    get_details_by_search,
+)
 import mongomock
 import unittest
 from agilisHF.model import Dog
@@ -68,7 +72,7 @@ class DetailsTest(unittest.TestCase):
                 {"name": 1, "age": "Middle age", "sex": "male"}, self.db
             )
 
-    def test_vaccinated_value_should_work(self):
+    def test_vaccinated_value_should_work_with_false(self):
         result = get_details_by_search(
             {"name": "Test", "age": 1, "vaccinated": False}, self.db
         )
@@ -76,3 +80,23 @@ class DetailsTest(unittest.TestCase):
         assert result[0].name == self.dogs[0].name
         # Does not have vaccine
         assert len(result[0].vaccination) == 0
+
+    def test_vaccinated_value_should_work_with_true(self):
+        result = get_details_by_search(
+            {"name": "Test", "age": 1, "vaccinated": False}, self.db
+        )
+        assert len(result) == 1
+        assert result[0].name == self.dogs[0].name
+        # Does not have vaccine
+        assert len(result[0].vaccination) == 0
+
+    def test_search_by_free_text_should_not_throw_with_params(self):
+        get_details_by_free_text("Teszt", self.db)
+
+    def test_search_by_free_text_should_return_value(self):
+        result = get_details_by_free_text("Teszt", self.db)
+        assert result[0].name == self.dogs[0].name
+
+    def test_search_by_free_text_should_throw_validation_error(self):
+        with self.assertRaises(ValidationError):
+            get_details_by_free_text(0, self.db)

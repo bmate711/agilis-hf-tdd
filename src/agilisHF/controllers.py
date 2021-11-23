@@ -71,3 +71,25 @@ def validate_search_condition_types(search_conditions: dict):
 
 def get_details_by_id(id: str, pymongo_db: Database):
     raise NotImplementedError
+
+
+def get_details_by_free_text(search_value: str, pymongo_db: Database):
+    validate_search_string(search_value)
+    dogs = pymongo_db.dogs.find()
+    result: List[Dog] = []
+    for dog_data in dogs:
+        dog = Dog(**dog_data)
+        if (
+            (dog.description.find(search_value) > -1)
+            or (dog.name.find(search_value) > -1)
+            or (dog.breed.find(search_value) > -1)
+        ):
+            result.append(dog)
+    return result
+
+
+def validate_search_string(search_value: str):
+    if type(search_value) is not str or (
+        type(search_value) is str and len(search_value) == 0
+    ):
+        raise ValidationError(f"Search value should be a non empty string")
