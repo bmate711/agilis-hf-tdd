@@ -1,4 +1,4 @@
-from agilisHF.controllers import get_details_by_search
+from agilisHF.controllers import ValidationError, get_details_by_search
 import mongomock
 import unittest
 from agilisHF.model import Dog
@@ -57,3 +57,7 @@ class DetailsTest(unittest.TestCase):
     def test_good_query_should_return_dog_list(self):
         dogs = get_details_by_search({"name": "Test", "age": 1}, self.db)
         assert len(dogs) == 1
+
+    def test_wrong_params_throw_validation_error(self):
+        with self.assertRaises(ValidationError):
+            get_details_by_search({"test": "test", "null": None}, self.db)
