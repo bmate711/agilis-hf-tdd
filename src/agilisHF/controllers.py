@@ -15,38 +15,46 @@ class ValidationError(Exception):
     pass
 
 
-# Search conditions
-# { "name": string
-#   "age": number,
-#   "vaccinated": boolean
-#   "color": string
-#   "sex": boolean
-#   "breed": string
-# }
-def get_details_by_search(search_conditions: dict, pymongo_db: Database) -> List[Dog]:
-    validate_search_condition_keys(search_conditions)
-    validate_search_condition_types(search_conditions)
 
-    search_query = {}
+def get_details_by_search(search_conditions: dict, pymongo_db: Database) -> List[Dog]:
+    dogs = pymongo_db.dogs
+    validate_search_conditons(search_conditions)
+    search_values = {}
     for key, value in search_conditions.items():
+        if key == "search_str":
+            pass
         if key == "vaccinated":
-            search_query["vaccination"] = (
+            search_values["vaccination"] = (
                 {"$exists": True, "$ne": []}
                 if value == True
                 else {"$exists": True, "$eq": []}
             )
         elif value is not None:
-            search_query[key] = value
-    result = pymongo_db.dogs.find(search_query)
-    dogs: List[Dog] = []
+            search_values[key] = value
+
+    result = dogs.find(search_values)
+    result_dogs = []
+    if result.count() == 0 and len(search_values.keys()) != 0:
+        if "search_str" not in search_conditions.keys():
+            return []
+        search_dogs = dogs.find()
+        for dog in search_dogs:
+            if (
+                (dog["description"].find(search_conditions["search_str"]) > -1)
+                or (dog["name"].find(search_conditions["search_str"]) > -1)
+                or (dog["breed"].find(search_conditions["search_str"]) > -1)
+            ):
+                result_dogs.append(Dog(**dog))
+        return result_dogs
     for dog in result:
-        dogData = Dog(**dog)
-        dogs.append(dogData)
-    return dogs
+        result_dogs.append(Dog(**dog))
+    return result_dogs
 
 
 valid_keys = ["name", "age", "vaccinated", "color", "sex", "breed"]
-
+def validate_search_conditons(search_conditions: dict):
+    validate_search_condition_keys(search_conditions)
+    validate_search_condition_types(search_conditions)
 
 def validate_search_condition_keys(search_conditions: dict):
     for key in search_conditions.keys():
