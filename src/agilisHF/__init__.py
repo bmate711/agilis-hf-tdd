@@ -35,7 +35,7 @@ pymongo = PyMongo(app)
 print(os.getenv("MONGO_URI"))
 # Get a reference to the recipes collection.
 # Uses a type-hint, so that your IDE knows what's happening!
-data: Collection = pymongo.db.dog
+dog_context: Collection = pymongo.db.dog
 
 data2: Collection = pymongo.db.user
 
@@ -70,16 +70,15 @@ def resource_not_found(e):
 def new_dog():
     raw_dog = request.get_json()
     dog = Dog(**raw_dog)
-    insert_result = data.insert_one(dog.to_bson())
+    insert_result = dog_context.insert_one(dog.to_bson())
     dog.id = PydanticObjectId(str(insert_result.inserted_id))
-    print(dog)
     return dog.to_json()
 
 
 @app.route("/import", methods=["POST"])
 def import_dogs():
     raw_dog_list = request.get_json()
-    import_data(raw_dog_list, data)
+    import_data(raw_dog_list, dog_context)
     return jsonify(True)
 
 
