@@ -13,19 +13,24 @@ class ValidationError(Exception):
     pass
 
 def create_user(raw, db):
+    validate_data(raw, db)
+    save_user(raw, db)
+    return True
+
+def validate_data(raw, db):
     validate_fullname(raw)
     validate_idcardnumber(raw)
     validate_emailaddress(raw, db)
     validate_password(raw)
+
+def save_user(raw, db):
     user = User(**raw)
     insert_result = db.insert_one(user.to_bson())
     user.id = PydanticObjectId(str(insert_result.inserted_id))
-    return True
+    return user
 
 def validate_fullname(raw):
     fullname = raw["fullname"]
-    match = re.fullmatch(regex2, fullname)
-    print(match)
     if len(fullname) <= 2 or len(fullname) > 128:
         raise ValidationError("Invalid name, a name length should be between 2 and 128") 
     if (re.fullmatch(regex2, fullname)):
